@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "convert": "node index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "wildlifehexagon",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "draft-js": "^0.10.0",
     "draft-js-export-html": "^1.4.1",
     "draftjs-to-html": "^0.9.1",
