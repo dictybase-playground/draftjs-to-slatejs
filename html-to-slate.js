@@ -5,14 +5,6 @@ const html = require("./deserialize").html
 require("jsdom-global")()
 global.DOMParser = window.DOMParser
 
-const checkDirectory = directory => {
-  try {
-    fs.statSync(directory)
-  } catch (e) {
-    fs.mkdirSync(directory)
-  }
-}
-
 const htmlToSlate = (inputFolder, outputFolder) => {
   fs.readdir(inputFolder, (err, files) => {
     if (err) {
@@ -27,16 +19,8 @@ const htmlToSlate = (inputFolder, outputFolder) => {
         const HtmlString = JSON.stringify(convertedHtml)
         const filenameWithoutExtension = path.basename(file, path.extname(file))
 
-        if (outputFolder) {
-          checkDirectory(outputFolder)
-        } else {
-          checkDirectory("output")
-        }
-
         fs.writeFileSync(
-          outputFolder
-            ? `./${outputFolder}/${filenameWithoutExtension}.json`
-            : `./output/${filenameWithoutExtension}.json`,
+          `./${outputFolder}/${filenameWithoutExtension}.json`,
           HtmlString,
           err => {
             if (err) {
