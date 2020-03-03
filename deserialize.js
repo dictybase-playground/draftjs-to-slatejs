@@ -48,7 +48,6 @@ const rules = [
           },
         }
       } else if (BLOCK_TAGS[tagName]) {
-        // rule to handle blocks
         return {
           object: "block",
           type: BLOCK_TAGS[tagName],
@@ -58,7 +57,6 @@ const rules = [
           nodes: next(el.childNodes),
         }
       } else if (MARK_TAGS[tagName]) {
-        // rule to handle marks
         return {
           object: "mark",
           type: MARK_TAGS[tagName],

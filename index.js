@@ -1,7 +1,7 @@
 require("dotenv").config()
 const fs = require("fs")
 const fetch = require("node-fetch")
-
+const Value = require("slate").Value
 const draftjsToHTML = require("./draft-to-html").draftjsToHTML
 const htmlToSlate = require("./html-to-slate").htmlToSlate
 
@@ -39,6 +39,25 @@ const downloadJSONs = folder => {
   })
 }
 
+const verifySlateJSONs = folder => {
+  fs.readdir(folder, (err, files) => {
+    if (err) {
+      console.error(err)
+      process.exit(1) // stop the script
+    }
+    files.forEach(file => {
+      fs.readFile(file, "UTF-8", (err, content) => {
+        const fileContent = fs.readFileSync(`${folder}/${file}`)
+        try {
+          const value = Value.fromJSON(JSON.parse(fileContent))
+        } catch (error) {
+          console.error(error)
+        }
+      })
+    })
+  })
+}
+
 const uploadJSONs = () => {}
 
 fs.mkdirSync("json", { recursive: true })
@@ -46,7 +65,7 @@ fs.mkdirSync("html", { recursive: true })
 fs.mkdirSync("slate", { recursive: true })
 downloadJSONs("json")
 htmlToSlate("html", "slate")
-
+verifySlateJSONs("slate")
 // for content PATCH requests, need:
 // id, updated_by, content
 // uploadJSONs()
