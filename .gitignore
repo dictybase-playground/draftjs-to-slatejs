@@ -4,3 +4,4 @@ draftjs
 slate
 
 .env
+*.log
