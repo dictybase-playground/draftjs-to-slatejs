@@ -1,11 +1,10 @@
 require("dotenv").config()
 const fs = require("fs")
-const downloadJSONs = require("./download").downloadJSONs
-const draftjsToHTML = require("./draft-to-html").draftjsToHTML
-const htmlToSlate = require("./html-to-slate").htmlToSlate
-const verifySlateData = require("./verify").verifySlateData
+const { downloadJSONs } = require("./download")
+const { draftjsToHTML } = require("./draft-to-html")
+const { htmlToSlate } = require("./html-to-slate")
+const { verifySlateData } = require("./verify")
 
-// still needs to be fixed to run synchronously
 const fullConversion = async () => {
   try {
     fs.mkdirSync("draftjs", { recursive: true })
@@ -18,6 +17,7 @@ const fullConversion = async () => {
     await verifySlateData("slate")
   } catch (error) {
     console.log(error)
+    process.exit(1)
   }
 }
 

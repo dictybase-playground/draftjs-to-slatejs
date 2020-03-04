@@ -1,23 +1,23 @@
 const fs = require("fs")
-const Value = require("slate").Value
+const { promisify } = require("util")
+const { Value } = require("slate")
 
-const verifySlateData = folder => {
-  fs.readdir(folder, (err, files) => {
-    if (err) {
-      console.error(err)
-      process.exit(1)
+const readdir = promisify(fs.readdir)
+const readFile = promisify(fs.readFile)
+
+const verifySlateData = async folder => {
+  try {
+    const files = await readdir(folder)
+    for (const file of files) {
+      const fileName = `${folder}/${file}`
+      const fileContent = await readFile(fileName)
+      Value.fromJSON(JSON.parse(fileContent))
+      console.log(`✅  ${fileName} is valid Slate data`)
     }
-    files.forEach(file => {
-      fs.readFile(file, "UTF-8", (err, content) => {
-        const fileContent = fs.readFileSync(`${folder}/${file}`)
-        try {
-          Value.fromJSON(JSON.parse(fileContent))
-        } catch (error) {
-          console.error(error)
-        }
-      })
-    })
-  })
+  } catch (error) {
+    console.error(error)
+    process.exit(1)
+  }
 }
 
 module.exports = {

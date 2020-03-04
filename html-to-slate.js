@@ -1,37 +1,32 @@
 const fs = require("fs")
 const path = require("path")
-const html = require("./deserialize").html
+const { promisify } = require("util")
+const { html } = require("./deserialize")
 
 require("jsdom-global")()
 global.DOMParser = window.DOMParser
 
-const htmlToSlate = (inputFolder, outputFolder) => {
-  fs.readdir(inputFolder, (err, files) => {
-    if (err) {
-      console.error(err)
-      process.exit(1) // stop the script
+const readdir = promisify(fs.readdir)
+const readFile = promisify(fs.readFile)
+const writeFile = promisify(fs.writeFile)
+
+const htmlToSlate = async (inputFolder, outputFolder) => {
+  try {
+    const files = await readdir(inputFolder)
+    for (const file of files) {
+      const fileContent = await readFile(`${inputFolder}/${file}`)
+      const convertedHtml = html.deserialize(fileContent)
+      const htmlString = JSON.stringify(convertedHtml)
+      const filenameWithoutExtension = path.basename(file, path.extname(file))
+      const newFile = `${outputFolder}/${filenameWithoutExtension}.json`
+
+      await writeFile(newFile, htmlString)
+      console.log(`✅  Successfully converted to ${newFile}`)
     }
-
-    files.forEach(file => {
-      fs.readFile(file, "UTF-8", (err, content) => {
-        const fileContent = fs.readFileSync(`${inputFolder}/${file}`)
-        const convertedHtml = html.deserialize(fileContent)
-        const HtmlString = JSON.stringify(convertedHtml)
-        const filenameWithoutExtension = path.basename(file, path.extname(file))
-
-        fs.writeFileSync(
-          `./${outputFolder}/${filenameWithoutExtension}.json`,
-          HtmlString,
-          err => {
-            if (err) {
-              console.error(err)
-            }
-          },
-        )
-      })
-      console.log("✅  HTML to Slate Conversion complete!")
-    })
-  })
+  } catch (error) {
+    console.log(error)
+    process.exit(1)
+  }
 }
 
 module.exports = {
