@@ -16,7 +16,7 @@ const slugs = [
 ]
 
 const downloadJSONs = async folder => {
-  slugs.forEach(async item => {
+  for (const item of slugs) {
     try {
       const slug = `${namespace}-${item}`
       const res = await fetch(`${url}/contents/slug/${slug}`)
@@ -38,7 +38,7 @@ const downloadJSONs = async folder => {
       console.log(error)
       process.exit(1)
     }
-  })
+  }
 }
 
 module.exports = {
