@@ -1,9 +1,9 @@
 require("dotenv").config()
 const fs = require("fs")
-const { downloadJSONs } = require("./download")
-const { draftjsToHTML } = require("./draft-to-html")
-const { htmlToSlate } = require("./html-to-slate")
-const { verifySlateData } = require("./verify")
+const { downloadJSONs } = require("./src/download")
+const { draftjsToHTML } = require("./src/draft-to-html")
+const { htmlToSlate } = require("./src/html-to-slate")
+const { verifySlateData } = require("./src/verify")
 
 const fullConversion = async () => {
   try {
