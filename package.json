@@ -2,7 +2,7 @@
   "name": "draftjs-to-slatejs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "nodejs/index.js",
   "scripts": {
     "convert": "node index",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,6 +17,7 @@
     "immutable": "^3.8.2",
     "jsdom": "^10.1.0",
     "jsdom-global": "^3.0.2",
+    "minio": "^7.0.14",
     "node-fetch": "^2.6.0",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
