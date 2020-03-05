@@ -10,6 +10,9 @@ const readdir = promisify(fs.readdir)
 const readFile = promisify(fs.readFile)
 const writeFile = promisify(fs.writeFile)
 
+require("jsdom-global")()
+global.DOMParser = window.DOMParser
+
 const convertToSlate = async (inputFolder, outputFolder) => {
   try {
     const files = await readdir(inputFolder)
@@ -37,7 +40,7 @@ const convertToSlate = async (inputFolder, outputFolder) => {
           type: "contents",
           id: json.data.id,
           attributes: {
-            updated_by: process.env.USER_ID,
+            updated_by: "1635", // use variable here
             content: htmlString,
           },
         },
