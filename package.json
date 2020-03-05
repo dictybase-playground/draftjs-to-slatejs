@@ -10,7 +10,6 @@
   "author": "wildlifehexagon",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^8.2.0",
     "draft-js": "^0.10.0",
     "draft-js-export-html": "^1.4.1",
     "draftjs-to-html": "^0.9.1",
@@ -18,7 +17,6 @@
     "jsdom": "^10.1.0",
     "jsdom-global": "^3.0.2",
     "minio": "^7.0.14",
-    "node-fetch": "^2.6.0",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
     "slate": "^0.44.13",
