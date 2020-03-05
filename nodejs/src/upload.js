@@ -1,48 +1,35 @@
+const fs = require("fs")
+const path = require("path")
+const { promisify } = require("util")
 const Minio = require("minio")
+
+const readdir = promisify(fs.readdir)
 
 const minioClient = new Minio.Client({
   endPoint: "",
   //   port: 9000,
+  useSSL: true,
   accessKey: "",
   secretKey: "",
 })
 
-const uploadFiles = async () => {
-  const exists = await minioClient.bucketExists("slate")
-  if (!exists) {
-    minioClient.makeBucket("slate", "us-east-1", err => {
-      // if (err) return console.log(err)
-      console.log('Bucket created successfully in "us-east-1".')
-    })
+const uploadFiles = async folder => {
+  try {
+    const files = await readdir(folder)
+    for (const file of files) {
+      const fileName = `${folder}/${file}`
+      const metaData = {
+        "Content-Type": "application/json",
+      }
+      await minioClient.fPutObject("draftjs", fileName, fileName, metaData)
+      console.log(`Successfully uploaded ${file}`)
+    }
+  } catch (error) {
+    console.error(error)
+    process.exit(1)
   }
-  //   minioClient.bucketExists("slate", (err, exists) => {
-  //     if (err) {
-  //       console.log(error)
-  //     }
-  //     if (!exists) {
-  //       minioClient.makeBucket("slate", "us-east-1", err => {
-  //         // if (err) return console.log(err)
-
-  //         console.log('Bucket created successfully in "us-east-1".')
-  //       })
-  //     }
-  //   })
-
-  //   var metaData = {
-  //     "Content-Type": "application/octet-stream",
-  //     "X-Amz-Meta-Testing": 1234,
-  //     example: 5678,
-  //   }
-  // Using fPutObject API upload your file to the bucket europetrip.
-  //   minioClient.fPutObject(
-  //     "slate",
-  //     "about.json",
-  //     "slate/dsc-deposit.json",
-  //     function(err, etag) {
-  //       if (err) return console.log(err)
-  //       console.log("File uploaded successfully.")
-  //     },
-  //   )
 }
 
-uploadFiles()
+module.exports = {
+  uploadFiles: uploadFiles,
+}
