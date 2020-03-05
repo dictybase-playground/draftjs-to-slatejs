@@ -99,7 +99,7 @@ func DownloadJSON(c *cli.Context) error {
 			return err
 		}
 		// upload file to minio
-		n, err := minioClient.FPutObject(bucket, filename, filenamePath, minio.PutObjectOptions{ContentType: "application/json"})
+		n, err := minioClient.FPutObject(bucket, fmt.Sprintf("%s/%s", "draftjs", filename), filenamePath, minio.PutObjectOptions{ContentType: "application/json"})
 		if err != nil {
 			log.Fatalln(err)
 		}
