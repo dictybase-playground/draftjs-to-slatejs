@@ -90,7 +90,7 @@ func UpdateContent(c *cli.Context) error {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		log.Printf("Successfully downloaded %s to %s", filename, filenamePath)
+		log.Printf("Successfully downloaded %s", filename)
 	}
 
 	// read files and update content
@@ -110,7 +110,6 @@ func UpdateContent(c *cli.Context) error {
 		byteVal, err := ioutil.ReadAll(jsonFile)
 		err = json.Unmarshal([]byte(byteVal), c)
 		check(err)
-		fmt.Println(c.Data.Attributes.Content)
 
 		l, err := pbClient.UpdateContent(context.Background(), &pb.UpdateContentRequest{
 			Id: c.Data.Id,
