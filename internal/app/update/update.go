@@ -101,7 +101,7 @@ func updateWithSlateContent(c *cli.Context, filename string, dir string) error {
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal([]byte(byteVal), content)
+	err = json.Unmarshal(byteVal, content)
 	if err != nil {
 		return err
 	}
