@@ -10,20 +10,11 @@ import (
 
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
 	m "github.com/dictybase-playground/draftjs-to-slatejs/internal/minio"
+	"github.com/dictybase-playground/draftjs-to-slatejs/internal/slugs"
 	"github.com/minio/minio-go/v6"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 )
-
-var DSCSlugs = []string{"dsc-intro",
-	"dsc-about",
-	"dsc-other-materials",
-	"dsc-order",
-	"dsc-payment",
-	"dsc-deposit",
-	"dsc-faq",
-	"dsc-nomenclature-guidelines",
-	"dsc-other-stock-centers"}
 
 func GetDraftjsContent(c *cli.Context) error {
 	minioClient, err := m.NewMinioClient(c)
@@ -31,12 +22,15 @@ func GetDraftjsContent(c *cli.Context) error {
 		return cli.NewExitError(fmt.Sprintf("could not connect to minio %s", err), 2)
 	}
 	err = m.MakeBucket(c, minioClient)
+	if err != nil {
+		return cli.NewExitError(fmt.Sprintf("error making bucket %s", err), 2)
+	}
 	dir, err := ioutil.TempDir(os.TempDir(), "draftjs")
 	if err != nil {
 		return cli.NewExitError(fmt.Sprintf("could not create temp directory %s", err), 2)
 	}
 	bucket := c.String("minio-bucket")
-	for _, slug := range DSCSlugs {
+	for _, slug := range slugs.DSCSlugs {
 		if err := getContentJSON(c, slug, dir, bucket); err != nil {
 			return cli.NewExitError(err, 2)
 		}
