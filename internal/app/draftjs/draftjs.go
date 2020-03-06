@@ -31,7 +31,7 @@ func GetDraftjsContent(c *cli.Context) error {
 	}
 	bucket := c.String("minio-bucket")
 	for _, slug := range slugs.DSCSlugs {
-		if err := getContentJSON(c, slug, dir, bucket); err != nil {
+		if err := getContentJSON(c, slug, dir); err != nil {
 			return cli.NewExitError(err, 2)
 		}
 		if err := uploadFiles(minioClient, slug, dir, bucket); err != nil {
@@ -44,8 +44,10 @@ func GetDraftjsContent(c *cli.Context) error {
 func uploadFiles(minioClient *minio.Client, slug string, dir string, bucket string) error {
 	filename := fmt.Sprintf("%s.json", slug)
 	filenamePath := fmt.Sprintf("%s/%s", dir, filename)
+	objectName := fmt.Sprintf("%s/%s", "draftjs", filename)
+	options := minio.PutObjectOptions{ContentType: "application/json"}
 	// upload file to minio
-	n, err := minioClient.FPutObject(bucket, fmt.Sprintf("%s/%s", "draftjs", filename), filenamePath, minio.PutObjectOptions{ContentType: "application/json"})
+	n, err := minioClient.FPutObject(bucket, objectName, filenamePath, options)
 	if err != nil {
 		return err
 	}
@@ -53,7 +55,7 @@ func uploadFiles(minioClient *minio.Client, slug string, dir string, bucket stri
 	return nil
 }
 
-func getContentJSON(c *cli.Context, slug string, dir string, bucket string) error {
+func getContentJSON(c *cli.Context, slug string, dir string) error {
 	addr := fmt.Sprintf("%s:%s", c.String("content-grpc-host"), c.String("content-grpc-port"))
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	if err != nil {

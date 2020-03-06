@@ -17,6 +17,8 @@ func ConvertContent(c *cli.Context) error {
 	command := exec.Command("node-cli", "convert", "--minioHost", host, "--minioPort", port, "--accessKey", ak, "--secretKey", sk, "--bucket", b, "--userId", id)
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
-	command.Run()
+	if err := command.Run(); err != nil {
+		return err
+	}
 	return nil
 }
