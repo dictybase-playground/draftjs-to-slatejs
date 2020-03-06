@@ -22,7 +22,7 @@ type Content struct {
 
 type Data struct {
 	Type       string     `json:"type"`
-	Id         int64      `json:"id"`
+	ID         int64      `json:"id"`
 	Attributes Attributes `json:"attributes"`
 }
 
@@ -73,8 +73,9 @@ func UpdateContent(c *cli.Context) error {
 func downloadFiles(minioClient *minio.Client, slug string, dir string, bucket string) error {
 	filename := fmt.Sprintf("%s.json", slug)
 	filenamePath := fmt.Sprintf("%s/%s", dir, filename)
+	objectName := fmt.Sprintf("%s/%s", "slatejs", filename)
 	// download files from minio
-	err := minioClient.FGetObject(bucket, fmt.Sprintf("%s/%s", "slatejs", filename), filenamePath, minio.GetObjectOptions{})
+	err := minioClient.FGetObject(bucket, objectName, filenamePath, minio.GetObjectOptions{})
 	if err != nil {
 		return err
 	}
@@ -97,15 +98,18 @@ func updateWithSlateContent(c *cli.Context, filename string, dir string) error {
 	defer jsonFile.Close()
 	content := &Content{}
 	byteVal, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return err
+	}
 	err = json.Unmarshal([]byte(byteVal), content)
 	if err != nil {
 		return err
 	}
 	l, err := pbClient.UpdateContent(context.Background(), &pb.UpdateContentRequest{
-		Id: content.Data.Id,
+		Id: content.Data.ID,
 		Data: &pb.UpdateContentRequest_Data{
 			Type: content.Data.Type,
-			Id:   content.Data.Id,
+			Id:   content.Data.ID,
 			Attributes: &pb.ExistingContentAttributes{
 				UpdatedBy: content.Data.Attributes.UpdatedBy,
 				Content:   content.Data.Attributes.Content,
