@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/download"
+	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/update"
 	"github.com/urfave/cli"
 )
 
@@ -30,6 +31,12 @@ func main() {
 			Name:   "download-json",
 			Usage:  "downloads draft.js content and saves as json files",
 			Action: download.DownloadJSON,
+			Flags:  getServerFlags(),
+		},
+		{
+			Name:   "update-content",
+			Usage:  "updates API with downloaded slate.js content",
+			Action: update.UpdateContent,
 			Flags:  getServerFlags(),
 		},
 	}

@@ -1,4 +1,4 @@
-package download
+package update
 
 import (
 	"context"
@@ -7,12 +7,28 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
 	"github.com/minio/minio-go/v6"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 )
+
+type Content struct {
+	Data Data `json:"data"`
+}
+
+type Data struct {
+	Type       string     `json:"type"`
+	Id         string     `json:"id"`
+	Attributes Attributes `json:"attributes"`
+}
+
+type Attributes struct {
+	UpdatedBy string `json:"updated_by"`
+	Content   string `json:"content"`
+}
 
 func check(e error) {
 	if e != nil {
@@ -39,7 +55,7 @@ func NewMinioClient(c *cli.Context) (*minio.Client, error) {
 	)
 }
 
-func DownloadJSON(c *cli.Context) error {
+func UpdateContent(c *cli.Context) error {
 	// connect to content grpc
 	host := c.String("content-grpc-host")
 	port := c.String("content-grpc-port")
@@ -65,31 +81,57 @@ func DownloadJSON(c *cli.Context) error {
 		log.Printf("Successfully created %s\n", bucket)
 	}
 
-	// get draftjs content and save as json files
-	dir, err := ioutil.TempDir(os.TempDir(), "draftjs")
+	dir, err := ioutil.TempDir(os.TempDir(), "slatejs")
 	check(err)
 	for _, slug := range slugs {
-		content, err := pbClient.GetContentBySlug(context.Background(), &pb.ContentRequest{Slug: slug})
-		if err != nil {
-			return err
-		}
-		jsonString, err := json.Marshal(content)
-		if err != nil {
-			return err
-		}
 		filename := fmt.Sprintf("%s.json", slug)
 		filenamePath := fmt.Sprintf("%s/%s", dir, filename)
-		// write json files to temp directory
-		if err := ioutil.WriteFile(filenamePath, jsonString, 0644); err != nil {
-			return err
-		}
-		// upload file to minio
-		n, err := minioClient.FPutObject(bucket, fmt.Sprintf("%s/%s", "draftjs", filename), filenamePath, minio.PutObjectOptions{ContentType: "application/json"})
+		// download files from minio
+		err = minioClient.FGetObject(bucket, fmt.Sprintf("%s/%s", "slate", filename), filenamePath, minio.GetObjectOptions{})
 		if err != nil {
 			log.Fatalln(err)
 		}
-
-		log.Printf("Successfully uploaded %s of size %d\n", filename, n)
+		log.Printf("Successfully downloaded %s to %s", filename, filenamePath)
 	}
+
+	// read files and update content
+	f, err := os.Open(dir)
+	check(err)
+	files, err := f.Readdir(-1)
+	f.Close()
+	check(err)
+
+	for _, file := range files {
+		jsonFile, err := os.Open(fmt.Sprintf("%s/%s", dir, file.Name()))
+		check(err)
+		defer jsonFile.Close()
+
+		c := &Content{}
+
+		byteVal, err := ioutil.ReadAll(jsonFile)
+		err = json.Unmarshal([]byte(byteVal), c)
+		check(err)
+		fmt.Println(c.Data.Attributes.Content)
+
+		id, err := strconv.ParseInt(c.Data.Id, 10, 64)
+		check(err)
+		uid, err := strconv.ParseInt(c.Data.Attributes.UpdatedBy, 10, 64)
+		check(err)
+
+		l, err := pbClient.UpdateContent(context.Background(), &pb.UpdateContentRequest{
+			Id: id,
+			Data: &pb.UpdateContentRequest_Data{
+				Type: c.Data.Type,
+				Id:   id,
+				Attributes: &pb.ExistingContentAttributes{
+					UpdatedBy: uid,
+					Content:   c.Data.Attributes.Content,
+				},
+			},
+		})
+		check(err)
+		log.Printf("successfully updated page content with ID %v \n", l.Data.Id)
+	}
+
 	return nil
 }
