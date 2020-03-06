@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
 
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
 	"github.com/minio/minio-go/v6"
@@ -113,18 +112,13 @@ func UpdateContent(c *cli.Context) error {
 		check(err)
 		fmt.Println(c.Data.Attributes.Content)
 
-		id, err := strconv.ParseInt(c.Data.Id, 10, 64)
-		check(err)
-		uid, err := strconv.ParseInt(c.Data.Attributes.UpdatedBy, 10, 64)
-		check(err)
-
 		l, err := pbClient.UpdateContent(context.Background(), &pb.UpdateContentRequest{
 			Id: id,
 			Data: &pb.UpdateContentRequest_Data{
 				Type: c.Data.Type,
-				Id:   id,
+				Id:   c.Data.Id,
 				Attributes: &pb.ExistingContentAttributes{
-					UpdatedBy: uid,
+					UpdatedBy: c.Data.Attributes.UpdatedBy,
 					Content:   c.Data.Attributes.Content,
 				},
 			},
