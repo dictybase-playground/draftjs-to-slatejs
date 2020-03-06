@@ -6,7 +6,7 @@ const { convertToSlate } = require("../src/convert")
 const { uploadFiles } = require("../src/upload")
 
 exports.command = "convert [options]"
-exports.describe = "## convert draft.js content to slate.js format ##"
+exports.describe = "converts draft.js content to slate.js format"
 exports.builder = yargs => {
   yargs
     .positional("minioHost", {
@@ -60,7 +60,6 @@ exports.handler = async argv => {
       accessKey: argv.accessKey,
       secretKey: argv.secretKey,
     })
-
     const bucket = argv.bucket
 
     await downloadJSON(bucket, "draftjs", minioClient)

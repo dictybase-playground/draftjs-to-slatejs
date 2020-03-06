@@ -38,13 +38,12 @@ const rules = [
     deserialize(el, next) {
       const tagName = el.tagName.toLowerCase()
       if (tagName === "a") {
-        // special case for links, to grab their href
         return {
           object: "inline",
           type: "link",
           nodes: next(el.childNodes),
           data: {
-            href: el.getAttribute("href"),
+            href: el.getAttribute("href"), // special case to grab href from links
           },
         }
       } else if (BLOCK_TAGS[tagName]) {
