@@ -86,7 +86,7 @@ func UpdateContent(c *cli.Context) error {
 		filename := fmt.Sprintf("%s.json", slug)
 		filenamePath := fmt.Sprintf("%s/%s", dir, filename)
 		// download files from minio
-		err = minioClient.FGetObject(bucket, fmt.Sprintf("%s/%s", "slate", filename), filenamePath, minio.GetObjectOptions{})
+		err = minioClient.FGetObject(bucket, fmt.Sprintf("%s/%s", "slatejs", filename), filenamePath, minio.GetObjectOptions{})
 		if err != nil {
 			log.Fatalln(err)
 		}

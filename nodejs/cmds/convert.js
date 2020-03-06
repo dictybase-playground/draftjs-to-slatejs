@@ -51,7 +51,7 @@ exports.builder = yargs => {
 exports.handler = async argv => {
   try {
     fs.mkdirSync("draftjs", { recursive: true })
-    fs.mkdirSync("slate", { recursive: true })
+    fs.mkdirSync("slatejs", { recursive: true })
 
     const minioClient = new Minio.Client({
       endPoint: argv.minioHost,
@@ -64,9 +64,9 @@ exports.handler = async argv => {
     const bucket = argv.bucket
 
     await downloadJSON(bucket, "draftjs", minioClient)
-    await convertToSlate("draftjs", "slate", argv.userId)
-    await verifySlateData("slate")
-    await uploadFiles(bucket, "slate", minioClient)
+    await convertToSlate("draftjs", "slatejs", argv.userId)
+    await verifySlateData("slatejs")
+    await uploadFiles(bucket, "slatejs", minioClient)
   } catch (error) {
     console.log(error)
     process.exit(1)
