@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/convert"
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/download"
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/update"
 	"github.com/urfave/cli"
@@ -31,13 +32,19 @@ func main() {
 			Name:   "download-json",
 			Usage:  "downloads draft.js content and saves as json files",
 			Action: download.DownloadJSON,
-			Flags:  getServerFlags(),
+			Flags:  getAppFlags(),
+		},
+		{
+			Name:   "convert-content",
+			Usage:  "runs node.js script to convert draftjs to slate content",
+			Action: convert.ConvertContent,
+			Flags:  getAppFlags(),
 		},
 		{
 			Name:   "update-content",
 			Usage:  "updates API with downloaded slate.js content",
 			Action: update.UpdateContent,
-			Flags:  getServerFlags(),
+			Flags:  getAppFlags(),
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
@@ -45,7 +52,7 @@ func main() {
 	}
 }
 
-func getServerFlags() []cli.Flag {
+func getAppFlags() []cli.Flag {
 	var f []cli.Flag
 	f = append(f, minioFlags()...)
 	return append(f, grpcFlags()...)
@@ -89,12 +96,16 @@ func minioFlags() []cli.Flag {
 		cli.StringFlag{
 			Name:  "minio-bucket",
 			Usage: "minio bucket",
-			Value: "draftjs",
+			Value: "content",
 		},
 		cli.StringFlag{
 			Name:  "minio-location",
 			Usage: "minio location",
 			Value: "us-east-1",
+		},
+		cli.StringFlag{
+			Name:  "user-id",
+			Usage: "user id to use for updating content",
 		},
 	}
 }

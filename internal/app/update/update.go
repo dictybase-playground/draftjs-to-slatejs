@@ -20,12 +20,12 @@ type Content struct {
 
 type Data struct {
 	Type       string     `json:"type"`
-	Id         string     `json:"id"`
+	Id         int64      `json:"id"`
 	Attributes Attributes `json:"attributes"`
 }
 
 type Attributes struct {
-	UpdatedBy string `json:"updated_by"`
+	UpdatedBy int64  `json:"updated_by"`
 	Content   string `json:"content"`
 }
 
@@ -113,7 +113,7 @@ func UpdateContent(c *cli.Context) error {
 		fmt.Println(c.Data.Attributes.Content)
 
 		l, err := pbClient.UpdateContent(context.Background(), &pb.UpdateContentRequest{
-			Id: id,
+			Id: c.Data.Id,
 			Data: &pb.UpdateContentRequest_Data{
 				Type: c.Data.Type,
 				Id:   c.Data.Id,
