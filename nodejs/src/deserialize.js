@@ -37,22 +37,20 @@ const rules = [
   {
     deserialize(el, next) {
       const tagName = el.tagName.toLowerCase()
+      // special case to grab href from links
       if (tagName === "a") {
         return {
           object: "inline",
           type: "link",
           nodes: next(el.childNodes),
           data: {
-            href: el.getAttribute("href"), // special case to grab href from links
+            href: el.getAttribute("href"),
           },
         }
       } else if (BLOCK_TAGS[tagName]) {
         return {
           object: "block",
           type: BLOCK_TAGS[tagName],
-          data: {
-            className: el.getAttribute("class"),
-          },
           nodes: next(el.childNodes),
         }
       } else if (MARK_TAGS[tagName]) {
