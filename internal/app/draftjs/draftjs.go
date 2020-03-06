@@ -1,4 +1,4 @@
-package download
+package draftjs
 
 import (
 	"context"
@@ -13,12 +13,6 @@ import (
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 )
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
 
 var slugs = []string{"dsc-intro",
 	"dsc-about",
@@ -39,18 +33,18 @@ func NewMinioClient(c *cli.Context) (*minio.Client, error) {
 	)
 }
 
-func DownloadJSON(c *cli.Context) error {
-	// connect to content grpc
-	host := c.String("content-grpc-host")
-	port := c.String("content-grpc-port")
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%s", host, port), grpc.WithInsecure())
-	check(err)
+func GetDraftjsContent(c *cli.Context) error {
+	addr := fmt.Sprintf("%s:%s", c.String("content-grpc-host"), c.String("content-grpc-port"))
+	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+	if err != nil {
+		return cli.NewExitError(fmt.Sprintf("could not connect to grpc %s", err), 2)
+	}
 	defer conn.Close()
 	pbClient := pb.NewContentServiceClient(conn)
-
-	// set up minio client
 	minioClient, err := NewMinioClient(c)
-	check(err)
+	if err != nil {
+		return cli.NewExitError(fmt.Sprintf("could not connect to minio %s", err), 2)
+	}
 	bucket := c.String("minio-bucket")
 	location := c.String("minio-location")
 	err = minioClient.MakeBucket(bucket, location)
@@ -67,7 +61,9 @@ func DownloadJSON(c *cli.Context) error {
 
 	// get draftjs content and save as json files
 	dir, err := ioutil.TempDir(os.TempDir(), "draftjs")
-	check(err)
+	if err != nil {
+		return cli.NewExitError(fmt.Sprintf("could not create temp directory %s", err), 2)
+	}
 	for _, slug := range slugs {
 		content, err := pbClient.GetContentBySlug(context.Background(), &pb.ContentRequest{Slug: slug})
 		if err != nil {

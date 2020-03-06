@@ -1,7 +1,4 @@
 node_modules
-html
-draftjs
-slatejs
 
 .env
 *.log

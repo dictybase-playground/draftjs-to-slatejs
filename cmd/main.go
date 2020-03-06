@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/convert"
-	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/download"
+	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/draftjs"
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/update"
 	"github.com/urfave/cli"
 )
@@ -29,14 +29,14 @@ func main() {
 	}
 	app.Commands = []cli.Command{
 		{
-			Name:   "download-json",
-			Usage:  "downloads draft.js content and saves as json files",
-			Action: download.DownloadJSON,
+			Name:   "get-draftjs-content",
+			Usage:  "gets draft.js content and uploads their json to minio",
+			Action: draftjs.GetDraftjsContent,
 			Flags:  getAppFlags(),
 		},
 		{
 			Name:   "convert-content",
-			Usage:  "runs node.js script to convert draftjs to slate content",
+			Usage:  "runs node.js script to convert draft.js to slate.js content",
 			Action: convert.ConvertContent,
 			Flags:  getAppFlags(),
 		},
