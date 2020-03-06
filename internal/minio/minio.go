@@ -26,10 +26,10 @@ func MakeBucket(c *cli.Context, minioClient *minio.Client) error {
 		if errBucketExists == nil && exists {
 			log.Printf("%s already exists \n", bucket)
 		} else {
-			return cli.NewExitError(fmt.Sprintf("error creating bucket %s", err), 2)
+			return err
 		}
 	} else {
 		log.Printf("Successfully created bucket %s\n", bucket)
 	}
-	return err
+	return nil
 }
