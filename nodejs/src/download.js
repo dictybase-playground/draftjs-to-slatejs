@@ -10,11 +10,11 @@ const slugs = [
   "dsc-other-stock-centers",
 ]
 
-const downloadJSON = async (folder, minioClient) => {
+const downloadJSON = async (bucket, folder, minioClient) => {
   for (slug of slugs) {
     try {
       const filePath = `${folder}/${slug}.json`
-      await minioClient.fGetObject(folder, filePath, filePath)
+      await minioClient.fGetObject(bucket, filePath, filePath)
       console.log(`downloaded ${slug}.json`)
     } catch (error) {
       console.log(error)

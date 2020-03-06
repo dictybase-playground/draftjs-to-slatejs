@@ -28,7 +28,7 @@ exports.builder = yargs => {
     .positional("bucket", {
       type: "string",
       describe: "minio bucket to store content",
-      default: "draftjs",
+      default: "content",
     })
     .positional("userId", {
       type: "number",
@@ -61,10 +61,12 @@ exports.handler = async argv => {
       secretKey: argv.secretKey,
     })
 
-    await downloadJSON("draftjs", minioClient)
+    const bucket = argv.bucket
+
+    await downloadJSON(bucket, "draftjs", minioClient)
     await convertToSlate("draftjs", "slate", argv.userId)
     await verifySlateData("slate")
-    await uploadFiles("slate", minioClient)
+    await uploadFiles(bucket, "slate", minioClient)
   } catch (error) {
     console.log(error)
     process.exit(1)
