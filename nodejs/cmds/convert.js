@@ -14,7 +14,7 @@ exports.builder = yargs => {
       describe: "minio service host",
     })
     .positional("minioPort", {
-      type: "string",
+      type: "number",
       describe: "minio service port",
     })
     .positional("accessKey", {
@@ -55,7 +55,7 @@ exports.handler = async argv => {
 
     const minioClient = new Minio.Client({
       endPoint: argv.minioHost,
-      port: Number(argv.minioPort),
+      port: argv.minioPort,
       useSSL: false,
       accessKey: argv.accessKey,
       secretKey: argv.secretKey,
