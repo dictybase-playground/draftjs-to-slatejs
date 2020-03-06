@@ -17,13 +17,9 @@ import (
 )
 
 func GetDraftjsContent(c *cli.Context) error {
-	minioClient, err := m.NewMinioClient(c)
+	minioClient, err := m.SetUpMinio(c)
 	if err != nil {
-		return cli.NewExitError(fmt.Sprintf("could not connect to minio %s", err), 2)
-	}
-	err = m.MakeBucket(c, minioClient)
-	if err != nil {
-		return cli.NewExitError(fmt.Sprintf("error making bucket %s", err), 2)
+		return cli.NewExitError(fmt.Sprintf("could not set up minio %s", err), 2)
 	}
 	dir, err := ioutil.TempDir(os.TempDir(), "draftjs")
 	if err != nil {

@@ -8,7 +8,20 @@ import (
 	"github.com/urfave/cli"
 )
 
-func NewMinioClient(c *cli.Context) (*minio.Client, error) {
+func SetUpMinio(c *cli.Context) (*minio.Client, error) {
+	m := minio.Client{}
+	minioClient, err := newMinioClient(c)
+	if err != nil {
+		return &m, cli.NewExitError(fmt.Sprintf("could not connect to minio %s", err), 2)
+	}
+	err = makeBucket(c, minioClient)
+	if err != nil {
+		return &m, cli.NewExitError(fmt.Sprintf("error making bucket %s", err), 2)
+	}
+	return minioClient, nil
+}
+
+func newMinioClient(c *cli.Context) (*minio.Client, error) {
 	return minio.New(
 		fmt.Sprintf("%s:%s", c.String("minio-host"), c.String("minio-port")),
 		c.String("minio-access-key"),
@@ -17,7 +30,7 @@ func NewMinioClient(c *cli.Context) (*minio.Client, error) {
 	)
 }
 
-func MakeBucket(c *cli.Context, minioClient *minio.Client) error {
+func makeBucket(c *cli.Context, minioClient *minio.Client) error {
 	bucket := c.String("minio-bucket")
 	location := c.String("minio-location")
 	err := minioClient.MakeBucket(bucket, location)

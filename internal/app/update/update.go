@@ -32,15 +32,10 @@ type Attributes struct {
 }
 
 func UpdateContent(c *cli.Context) error {
-	minioClient, err := m.NewMinioClient(c)
+	minioClient, err := m.SetUpMinio(c)
 	if err != nil {
-		return cli.NewExitError(fmt.Sprintf("could not connect to minio %s", err), 2)
+		return cli.NewExitError(fmt.Sprintf("could not set up minio %s", err), 2)
 	}
-	err = m.MakeBucket(c, minioClient)
-	if err != nil {
-		return cli.NewExitError(fmt.Sprintf("error making bucket %s", err), 2)
-	}
-
 	dir, err := ioutil.TempDir(os.TempDir(), "slatejs")
 	if err != nil {
 		return cli.NewExitError(fmt.Sprintf("could not create temp dir %s", err), 2)
@@ -51,15 +46,9 @@ func UpdateContent(c *cli.Context) error {
 			return cli.NewExitError(fmt.Sprintf("error downloading files %s", err), 2)
 		}
 	}
-	// read files and update content
-	f, err := os.Open(dir)
+	files, err := getFilesList(dir)
 	if err != nil {
-		return cli.NewExitError(fmt.Sprintf("could not open dir %s", err), 2)
-	}
-	files, err := f.Readdir(-1)
-	f.Close()
-	if err != nil {
-		return cli.NewExitError(fmt.Sprintf("could not read dir %s", err), 2)
+		return cli.NewExitError(fmt.Sprintf("getting file content %s", err), 2)
 	}
 	for _, file := range files {
 		err = updateWithSlateContent(c, file.Name(), dir)
@@ -68,6 +57,19 @@ func UpdateContent(c *cli.Context) error {
 		}
 	}
 	return nil
+}
+
+func getFilesList(dir string) ([]os.FileInfo, error) {
+	f, err := os.Open(dir)
+	if err != nil {
+		return nil, err
+	}
+	files, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
 }
 
 func downloadFiles(minioClient *minio.Client, slug string, dir string, bucket string) error {
