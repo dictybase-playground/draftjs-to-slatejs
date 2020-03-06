@@ -15,6 +15,8 @@ RUN apk add --update nodejs nodejs-npm
 COPY package*.json ./
 RUN npm install
 ADD nodejs nodejs
+# set up binary command (node-cli)
+RUN npm link
 
 FROM alpine:3.10
 RUN apk --no-cache add ca-certificates
