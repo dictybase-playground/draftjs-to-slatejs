@@ -55,6 +55,7 @@ func main() {
 func getAppFlags() []cli.Flag {
 	var f []cli.Flag
 	f = append(f, minioFlags()...)
+	f = append(f, boolFlags()...)
 	return append(f, grpcFlags()...)
 }
 
@@ -106,6 +107,15 @@ func minioFlags() []cli.Flag {
 		cli.StringFlag{
 			Name:  "user-id",
 			Usage: "user id to use for updating content",
+		},
+	}
+}
+
+func boolFlags() []cli.Flag {
+	return []cli.Flag{
+		cli.BoolFlag{
+			Name:  "convert",
+			Usage: "identifier to start conversion process",
 		},
 	}
 }

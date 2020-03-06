@@ -9,6 +9,7 @@ import (
 	"os"
 
 	pb "github.com/dictyBase/go-genproto/dictybaseapis/content"
+	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/convert"
 	m "github.com/dictybase-playground/draftjs-to-slatejs/internal/minio"
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/slugs"
 	"github.com/minio/minio-go/v6"
@@ -31,6 +32,11 @@ func GetDraftjsContent(c *cli.Context) error {
 			return cli.NewExitError(err, 2)
 		}
 		if err := uploadFiles(minioClient, slug, dir, bucket); err != nil {
+			return cli.NewExitError(err, 2)
+		}
+	}
+	if c.Bool("convert") {
+		if err := convert.ConvertContent(c); err != nil {
 			return cli.NewExitError(err, 2)
 		}
 	}
