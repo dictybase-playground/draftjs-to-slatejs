@@ -34,13 +34,13 @@ const convertToSlate = async (inputFolder, outputFolder, userId) => {
       const convertedSlateContent = html.deserialize(convertedHTML)
       const htmlString = JSON.stringify(convertedSlateContent)
 
-      // JSON structure necessary for PATCH requests
+      // JSON structure necessary for updating through content API
       const newJSON = {
         data: {
           type: "contents",
           id: json.data.id,
           attributes: {
-            updated_by: userId, // use variable here
+            updated_by: userId,
             content: htmlString,
           },
         },

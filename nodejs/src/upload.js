@@ -4,7 +4,7 @@ const { promisify } = require("util")
 
 const readdir = promisify(fs.readdir)
 
-const uploadFiles = async (folder, minioClient) => {
+const uploadFiles = async (bucket, folder, minioClient) => {
   try {
     const files = await readdir(folder)
     for (const file of files) {
@@ -12,7 +12,7 @@ const uploadFiles = async (folder, minioClient) => {
       const metaData = {
         "Content-Type": "application/json",
       }
-      await minioClient.fPutObject("draftjs", fileName, fileName, metaData)
+      await minioClient.fPutObject(bucket, fileName, fileName, metaData)
       console.log(`Successfully uploaded ${file}`)
     }
   } catch (error) {
