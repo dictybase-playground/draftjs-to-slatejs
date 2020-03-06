@@ -1,5 +1,3 @@
-const Minio = require("minio")
-
 const slugs = [
   "dsc-intro",
   "dsc-about",
@@ -12,22 +10,11 @@ const slugs = [
   "dsc-other-stock-centers",
 ]
 
-const minioClient = new Minio.Client({
-  endPoint: "",
-  //   port: 9000,
-  useSSL: true,
-  accessKey: "",
-  secretKey: "",
-})
-
-const downloadJSON = async folder => {
+const downloadJSON = async (folder, minioClient) => {
   for (slug of slugs) {
     try {
-      await minioClient.fGetObject(
-        folder,
-        `${folder}/${slug}.json`,
-        `${folder}/${slug}.json`,
-      )
+      const filePath = `${folder}/${slug}.json`
+      await minioClient.fGetObject(folder, filePath, filePath)
       console.log(`downloaded ${slug}.json`)
     } catch (error) {
       console.log(error)

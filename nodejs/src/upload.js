@@ -1,19 +1,10 @@
 const fs = require("fs")
 const path = require("path")
 const { promisify } = require("util")
-const Minio = require("minio")
 
 const readdir = promisify(fs.readdir)
 
-const minioClient = new Minio.Client({
-  endPoint: "",
-  //   port: 9000,
-  useSSL: true,
-  accessKey: "",
-  secretKey: "",
-})
-
-const uploadFiles = async folder => {
+const uploadFiles = async (folder, minioClient) => {
   try {
     const files = await readdir(folder)
     for (const file of files) {
