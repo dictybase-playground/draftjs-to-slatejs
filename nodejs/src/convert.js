@@ -13,37 +13,43 @@ const writeFile = promisify(fs.writeFile)
 require("jsdom-global")()
 global.DOMParser = window.DOMParser
 
-// Need to convert the raw JSON state to ContentState first
-// then convert ContentState to a raw JS structure
-// then finally convert that to HTML
-// https://draftjs.org/docs/api-reference-data-conversion
+const getJSONStructure = (contentId, userId, htmlString) => {
+  return {
+    data: {
+      type: "contents",
+      id: contentId,
+      attributes: {
+        updated_by: userId,
+        content: htmlString,
+      },
+    },
+  }
+}
 
 const convertToSlate = async (inputFolder, outputFolder, userId) => {
   try {
     const files = await readdir(inputFolder)
     for (const file of files) {
       const fileContent = await readFile(`${inputFolder}/${file}`)
-      // draftjs conversion process -- see above comment
+      // convert buffer object to json
       const json = JSON.parse(fileContent)
+      // Need to convert the raw JSON state to ContentState first
+      // then convert ContentState to a raw JS structure
+      // then finally convert that to HTML
+      // https://draftjs.org/docs/api-reference-data-conversion
       const contentState = convertFromRaw(
         JSON.parse(json.data.attributes.content),
       )
       const raw = convertToRaw(contentState)
       const convertedHTML = draftToHtml(raw)
+
       // now convert the HTML to Slate format
       const convertedSlateContent = html.deserialize(convertedHTML)
       const htmlString = JSON.stringify(convertedSlateContent)
+
       // JSON structure necessary for updating through content API
-      const newJSON = {
-        data: {
-          type: "contents",
-          id: json.data.id,
-          attributes: {
-            updated_by: userId,
-            content: htmlString,
-          },
-        },
-      }
+      const newJSON = getJSONStructure(json.data.id, userId, htmlString)
+
       // output the new JSON files
       const filenameWithoutExtension = path.basename(file, path.extname(file))
       const newFile = `${outputFolder}/${filenameWithoutExtension}.json`
