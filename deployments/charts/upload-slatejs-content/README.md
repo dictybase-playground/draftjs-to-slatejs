@@ -35,7 +35,7 @@ The following tables lists the configurable parameters of the **upload-slatejs-c
 | `minio.skey`       | Minio secret key                | ``                             |
 | `minio.bucket`     | Minio bucket to upload files to | `dsc-contents`                 |
 | `minio.location`   | Minio region                    | `us-east-1`                    |
-| `userId`           | Password for new ArangoDB user  | `9999`                         |
+| `userId`           | Password for new ArangoDB user  | ``                             |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
