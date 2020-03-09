@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "convert-draftjs-content.fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  template:
+    metadata:
+      name: {{ template "convert-draftjs-content.fullname" . }}
+      labels:
+        app: {{ template "convert-draftjs-content.fullname" . }}
+    spec:
+      containers:
+      - name: {{ template "convert-draftjs-content.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        args: [
+          "--log-level",
+          "info",
+          "get-draftjs-content",
+          "--minio-access-key",
+          "{{ .Values.minio.akey }}",
+          "--minio-secret-key",
+          "{{ .Values.minio.skey }}",
+          "--minio-bucket",
+          "{{ .Values.minio.bucket }}",
+          "--minio-location",
+          "{{ .Values.minio.location }}",
+          "--user-id",
+          "{{ .Values.userId }}",
+          "--convert"
+        ]
+      restartPolicy: Never
