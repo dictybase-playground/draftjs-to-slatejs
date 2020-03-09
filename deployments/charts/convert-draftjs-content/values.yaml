@@ -1,0 +1,12 @@
+image:
+  repository: dictybase/draftjs-to-slatejs
+  tag: latest
+  pullPolicy: IfNotPresent
+# Keys for accessing data in minio storage
+minio:
+  #akey:
+  #skey:
+  bucket: dsc-contents
+  location: us-east-1
+# user ID for updating content
+#userId
