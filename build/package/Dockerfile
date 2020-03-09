@@ -4,6 +4,7 @@ ENV GOPROXY https://proxy.golang.org
 RUN apk add --no-cache git build-base
 RUN mkdir -p /draftjs-to-slatejs
 WORKDIR /draftjs-to-slatejs
+# set up and build go app
 COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
@@ -15,10 +16,4 @@ RUN apk add --update nodejs nodejs-npm
 COPY package*.json ./
 RUN npm install
 ADD nodejs nodejs
-# set up binary command (node-cli)
-RUN npm link
-
-FROM alpine:3.10
-RUN apk --no-cache add ca-certificates
-COPY --from=0 /draftjs-to-slatejs/app /usr/local/bin/
-ENTRYPOINT ["/usr/local/bin/app"]
+ENTRYPOINT [ "./app" ]
