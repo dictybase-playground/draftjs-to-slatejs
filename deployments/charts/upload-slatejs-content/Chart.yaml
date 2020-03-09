@@ -1,0 +1,5 @@
+apiVersion: v1
+appVersion: "1.0.0"
+description: A Helm chart for uploading converted Slate.js content to the content API.
+name: upload-slatejs-content
+version: 1.0.0
