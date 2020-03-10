@@ -2,25 +2,22 @@ const Html = require("slate-html-serializer").default
 
 const BLOCK_TAGS = {
   p: "paragraph",
+  ul: "unordered-list",
+  ol: "ordered-list",
   li: "list-item",
-  ul: "bulleted-list",
-  ol: "numbered-list",
-  blockquote: "quote",
-  pre: "code",
-  h1: "heading-one",
-  h2: "heading-two",
-  h3: "heading-three",
-  h4: "heading-four",
-  h5: "heading-five",
-  h6: "heading-six",
-  figure: "figure",
-  figcaption: "figcaption",
+  h1: "h1",
+  h2: "h2",
+  h3: "h3",
+  h4: "h4",
+  h5: "h5",
+  h6: "h6",
   hr: "divider",
   table: "table",
-  th: "table-head",
+  th: "table-cell",
   tr: "table-row",
   td: "table-cell",
   center: "center",
+  div: "div",
 }
 
 const MARK_TAGS = {
@@ -30,33 +27,79 @@ const MARK_TAGS = {
   i: "italic",
   u: "underline",
   s: "strikethrough",
-  code: "code",
+  del: "strikethrough",
+  sub: "subscript",
+  sup: "superscript",
 }
 
 const rules = [
   {
+    // Special case for images, to grab their src.
     deserialize(el, next) {
-      const tagName = el.tagName.toLowerCase()
-      // special case to grab href from links
-      if (tagName === "a") {
+      if (el.tagName.toLowerCase() === "img") {
         return {
-          object: "inline",
+          object: "block",
+          type: "image",
+          nodes: next(el.childNodes),
+          data: {
+            src: el.getAttribute("src"),
+          },
+        }
+      }
+    },
+  },
+  {
+    // Special case for lists, to get all descendants.
+    deserialize(el, next) {
+      const tag = el.tagName.toLowerCase()
+      if (tag === "ol" || tag === "ul") {
+        // We get all descendant <li> tags, so even if there is a deep nesting
+        // of lists, we get all items and don't lose any.
+        // Note that this does lose nesting, however.
+        const itemsNodes = Array.from(el.querySelectorAll("li"))
+
+        return {
+          object: "block",
+          type: tag === "ol" ? "ordered-list" : "unordered-list",
+          nodes: next(itemsNodes),
+        }
+      }
+    },
+  },
+  {
+    // Special case for links, to grab their href.
+    deserialize(el, next) {
+      if (el.tagName.toLowerCase() === "a") {
+        return {
+          object: "mark",
           type: "link",
           nodes: next(el.childNodes),
           data: {
             href: el.getAttribute("href"),
           },
         }
-      } else if (BLOCK_TAGS[tagName]) {
+      }
+    },
+  },
+  {
+    deserialize(el, next) {
+      const block = BLOCK_TAGS[el.tagName.toLowerCase()]
+      if (block) {
         return {
           object: "block",
-          type: BLOCK_TAGS[tagName],
+          type: block,
           nodes: next(el.childNodes),
         }
-      } else if (MARK_TAGS[tagName]) {
+      }
+    },
+  },
+  {
+    deserialize(el, next) {
+      const mark = MARK_TAGS[el.tagName.toLowerCase()]
+      if (mark) {
         return {
           object: "mark",
-          type: MARK_TAGS[tagName],
+          type: mark,
           nodes: next(el.childNodes),
         }
       }
