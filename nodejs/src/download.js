@@ -1,6 +1,7 @@
 const slugs = [
   "dsc-intro",
   "dsc-about",
+  "dsc-additional-materials",
   "dsc-other-materials",
   "dsc-order",
   "dsc-payment",
