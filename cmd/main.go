@@ -6,6 +6,7 @@ import (
 
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/convert"
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/draftjs"
+	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/lexical"
 	"github.com/dictybase-playground/draftjs-to-slatejs/internal/app/update"
 	"github.com/urfave/cli"
 )
@@ -28,6 +29,12 @@ func main() {
 		},
 	}
 	app.Commands = []cli.Command{
+		{
+			Name:   "lexical-content",
+			Usage:  "output lexical json content in an output folder",
+			Action: lexical.LexicalContent,
+			Flags:  lexical.LexicalContentFlags(),
+		},
 		{
 			Name:   "get-draftjs-content",
 			Usage:  "gets draft.js content and uploads their json to minio",
