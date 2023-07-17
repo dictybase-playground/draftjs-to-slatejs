@@ -13,9 +13,9 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "draftjs-to-slate"
-	app.Usage = "cli for replacing draft.js data through grpc"
-	app.Version = "1.0.0"
+	app.Name = "content-manager"
+	app.Usage = "cli for managing json formatted data of rich text editor frontends"
+	app.Version = "1.1.0"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "log-format",
