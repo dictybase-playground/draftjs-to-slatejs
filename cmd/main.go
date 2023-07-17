@@ -31,7 +31,7 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:   "lexical-content",
-			Usage:  "output lexical json content in an output folder",
+			Usage:  "extract lexical json content from postgresql database to individual json file",
 			Action: lexical.LexicalContent,
 			Flags:  lexical.LexicalContentFlags(),
 		},
