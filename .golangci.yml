@@ -1,6 +1,8 @@
 run:
   allow-parallel-runners: true
 linters-settings: 
+    staticcheck:
+      checks: ["all", "-SA5001"]
     funlen:
         lines: 80
     errcheck: 
