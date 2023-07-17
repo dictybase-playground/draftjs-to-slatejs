@@ -2,6 +2,8 @@ package lexical
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"context"
 
@@ -27,6 +29,7 @@ func LexicalContent(c *cli.Context) error {
 		c.String("database"),
 	)
 	pool, err := pgxpool.New(context.Background(), dburl)
+	defer pool.Close()
 	if err != nil {
 		cli.NewExitError(
 			fmt.Sprintf("error in creating database connection pool %s", err),
@@ -41,7 +44,16 @@ func LexicalContent(c *cli.Context) error {
 		)
 	}
 	for _, row := range so {
-		fmt.Println(row.Slug)
+		output := filepath.Join(c.String("output-folder"), row.Slug+".json")
+		w, err := os.Create(output)
+		if err != nil {
+			return cli.NewExitError(
+				fmt.Sprintf("error in opening file %s %s", output, err),
+				2,
+			)
+		}
+		defer w.Close()
+		fmt.Fprint(w, row.Content)
 	}
 	return nil
 }
@@ -71,6 +83,11 @@ func LexicalContentFlags() []cli.Flag {
 		cli.StringFlag{
 			Name:     "database,d",
 			Usage:    "postgresql database name",
+			Required: true,
+		},
+		cli.StringFlag{
+			Name:     "output-folder",
+			Usage:    "output folder where all the content json files will be saved",
 			Required: true,
 		},
 	}
