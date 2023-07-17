@@ -26,15 +26,16 @@ Click the above links to see the documentation and values for each chart.
 
 ```
 NAME:
-   draftjs-to-slate - cli for replacing draft.js data through grpc
+   content-manager - cli for managing json formatted data of rich text editor frontends
 
 USAGE:
-   main [global options] command [command options] [arguments...]
+   convert [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.0
+   1.1.0
 
 COMMANDS:
+   lexical-content      extract lexical json content from postgresql database to individual json file
    get-draftjs-content  gets draft.js content and uploads their json to minio
    convert-content      runs node.js script to convert draft.js to slate.js content
    update-content       updates API with downloaded slate.js content
