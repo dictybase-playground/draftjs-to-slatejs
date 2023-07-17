@@ -109,3 +109,19 @@ OPTIONS:
    --content-grpc-host value  content grpc host [$CONTENT_API_SERVICE_HOST]
    --content-grpc-port value  content grpc port [$CONTENT_API_SERVICE_PORT]
 ```
+
+```
+NAME:
+   convert lexical-content - extract lexical json content from postgresql database to individual json file
+
+USAGE:
+   convert lexical-content [command options] [arguments...]
+
+OPTIONS:
+   --user value, -u value      postgresql database user
+   --pass value, -p value      postgresql database password
+   --host value                postgresql database host
+   --port value                postgresql database port (default: 5432)
+   --database value, -d value  postgresql database name
+   --output-folder value       output folder where all the content json files will be saved
+```
