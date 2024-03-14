@@ -6,7 +6,7 @@ require (
 	github.com/georgysavva/scany/v2 v2.0.0
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
-	github.com/jackc/pgx/v5 v5.4.2
+	github.com/jackc/pgx/v5 v5.5.4
 	github.com/minio/minio-go/v6 v6.0.49
 	github.com/mwitkow/go-proto-validators v0.3.0 // indirect
 	github.com/smartystreets/assertions v1.0.1 // indirect
