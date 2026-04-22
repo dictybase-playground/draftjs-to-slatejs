@@ -3,7 +3,7 @@ module github.com/dictybase-playground/draftjs-to-slatejs
 require (
 	github.com/dictyBase/go-genproto v0.0.0-20200122001226-b1ccbdee4aa3
 	github.com/georgysavva/scany/v2 v2.0.0
-	github.com/jackc/pgx/v5 v5.9.0
+	github.com/jackc/pgx/v5 v5.9.2
 	github.com/minio/minio-go/v6 v6.0.49
 	github.com/urfave/cli v1.22.2
 	google.golang.org/grpc v1.79.3
